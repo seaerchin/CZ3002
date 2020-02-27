@@ -17,7 +17,7 @@ def init_app(app):
     return 
 
 def from_firestore(document):
-    # translates a document into a concrete class
+    """translates a document and returns a dict representing the document"""
     return object
 
 # [START model]
@@ -36,23 +36,26 @@ class Student(object):
 
 # [START read]
 def read(collectionName: str, documentName: str):
+    """returns the document specified as a dict unless it's not found then returns None""" 
     doc_ref = db.collection(collectionName).document(documentName)
     try:
         doc = doc_ref.get()
-        print(u'Document data: {}'.format(doc.to_dict()))
+        return doc.to_dict() 
     except google.cloud.exceptions.NotFound:
-        print(u'No such document!')
+        return None
 
 # [END read]
 
 # [START create]
 def create(data):
+    """creates the document with the data under the collection""" 
     student = Student(**data)
     return from_sql(sentence)
 # [END create]
 
 # [START update]
 def update(data, id):
+    """updates the document; not for use with nested attributes or arrays of attributes"""
     sentence = Sentence.query.get(id)
     for k, v in data.items():
         setattr(sentence, k, v)
@@ -61,37 +64,7 @@ def update(data, id):
 # [END update]
 
 def delete(id):
+    """deletes the specified document""" 
     Sentence.query.filter_by(id=id).delete()
     db.session.commit()
 
-def view_all(): 
-    ls = Sentence.query.order_by(Sentence.id).all()
-    ls = [x.id for x in ls]
-    return ls
-
-# refactor to remove references to this method and use view_cluster instead 
-def view_url(): 
-    ls = Sentence.query.filter_by(Spam = 2).all()
-    ls = [(x.Data, x.Spam) for x in ls]
-    return ls
-
-# change this to accept **kwargs then check length of kwargs to filter
-# method to return items you queried by key with given value
-def view_cluster(key, value):
-    ls = Sentence.query.filter_by(key = value).all()
-    return ls 
-
-def _create_database():
-    """
-    If this script is run directly, create all the tables necessary to run the
-    application.
-    """
-    app = Flask(__name__)
-    app.config.from_pyfile('../config.py')
-    init_app(app)
-    with app.app_context():
-        db.create_all()
-    print("All tables created")
-
-if __name__ == '__main__':
-    _create_database()
