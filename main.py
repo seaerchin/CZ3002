@@ -6,6 +6,11 @@ from google.cloud import storage
 import requests  
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "private.json"
 
+# TODO: refactor so that private key is specified in config
+# TODO: loop to listen on ip
+# TODO: api for front-end to access 
+# TODO: structure properly 
+
 # Project ID is determined by the GCLOUD_PROJECT environment variable
 # persistent object passed around 
 db = firestore.Client()
