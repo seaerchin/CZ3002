@@ -1,10 +1,8 @@
 # this file provides the actual api endpoints for front-end to hit
-
 from flask import Blueprint, request, jsonify, make_response, render_template, url_for, redirect
 from werkzeug.exceptions import NotFound, InternalServerError
-import cloudFireStore
+from . import cloudFireStore    
 import datetime 
-
 crud = Blueprint('crud', __name__)
 
 @crud.route('/create/<type>/<id>', methods = ['PUT'])
@@ -12,7 +10,7 @@ def create(type: str, id: str):
     """gets the json object and creates the document from the provided type and id. returns 200 if ok else 500"""
     data = request.get_json
     try: 
-        result = cloudFireStore.create(type, id, data)
+        cloudFireStore.create(type, id, data)
         resp = jsonify(success=True)
         return resp
     except:
@@ -24,15 +22,14 @@ def read(type: str, id: str):
     data = cloudFireStore.read(type, id)
     if data == None:
         raise NotFound("The document you are requesting could not be found in the database")
-    return jsonify(data.to_dict())
+    return jsonify(data)
 
 @crud.route('/update/<type>/<id>', methods = ['PUT'])
 def update(type:str, id: str):
     """parses a json dict and creates an object in db; returns 200 if ok else 500"""
     data = request.get_json
-    x = getattr(cloudFireStore, type) # x is the constructor for the class 
     try:
-        result = cloudFireStore.update(data, type, id) 
+        cloudFireStore.update(data, type, id) 
         resp = jsonify(success=True)
         return resp
     except:
@@ -40,5 +37,6 @@ def update(type:str, id: str):
 
 @crud.route('/delete/<type>/<id>', methods = ['GET'])
 def delete(type:str, id: str):
+    """deletes the given document under collection"""
     cloudFireStore.delete(type, id)
     return jsonify(success=True)

@@ -4,23 +4,21 @@ from flask import Flask
 from flask import redirect, url_for, request, make_response, jsonify, render_template
 from google.cloud import storage
 import requests  
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "private.json"
+import Firestore
 
 # TODO: refactor so that private key is specified in config
 # TODO: loop to listen on ip
 # TODO: api for front-end to access 
 # TODO: structure properly 
 
+# register default configs and blueprints 
+app = Flask(__name__)
+app.config.from_pyfile("config.py")
+app.register_blueprint(Firestore.crud)
+
 # Project ID is determined by the GCLOUD_PROJECT environment variable
 # persistent object passed around 
 db = firestore.Client()
-
-# register default configs and blueprints 
-
-app = Flask(__name__)
-app.config.from_pyfile("config.py")
-app.register_blueprint(cloudFireStore.crud)
-
 
 @app.route('/')
 def hello() -> str:

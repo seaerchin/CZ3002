@@ -3,68 +3,104 @@
 from flask import Flask
 from google.cloud import firestore
 import google.cloud.exceptions
+from datetime import datetime
+from typing import List
+import os
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "private.json"
 
 db = firestore.Client()
 
-def test():
-    return 
+def from_firestore(document) -> int:
+    return "3"
 
-# global dict to map types to respective constructors because python doesn't have switch
-dict_mapper = {"student": test}
 
-# change 
-def init_app(app):
-    return 
-
-def from_firestore(document):
-    """translates a document and returns a dict representing the document"""
-    return object
-
-# [START model]
 # class requires 2 methods: from_dict/to_dict
-class Student(object):
+# defines a student
+class User:
+    """User represents a user in the forum with its associated attributes. methods provided are for interfacing with cloud firebase"""
     def __repr__(self):
-        return 
+        return
 
-    def __init__(self):
-        return 
+    def __init__(self, email: str, firstName: str, lastName: str, matric: str, password: str, registeredCourses: List[str]) :
+        self.email = email
+        self.firstName = firstName
+        self.lastName = lastName
+        self.matric = matric
+        self.password = password
+        self.registeredCourses = registeredCourses
 
     @staticmethod
-    def from_dict(**source): 
-        return 
-# [END model]
+    def from_dict(**source):
+        return User(**source)
 
-# [START read]
+    def to_dict(self):
+        return
+
+
+# defines a course
+class Course:
+    def __repr__(self) -> str:
+        return "Course(courseCoord = {}, courseMaterials = {}, courseName = {}, numUsers {})".format(self.courseCoord, self.courseMaterials, self.courseName, self.numUsers)
+
+    def __init__(self, courseCoord: str, courseMaterials: str, courseName: str, numUsers: int):
+        self.courseCoord = courseCoord
+        self.courseMaterials = courseMaterials
+        self.courseName = courseName
+        self.numUsers = numUsers
+
+    @staticmethod
+    def from_dict(**source):
+        return Course(**source)
+
+    def to_dict(self) -> dict:
+        dest = {
+            "courseCoord": self.courseCoord,
+            "courseMaterials": self.courseMaterials,
+            "courseName": self.courseName,
+            "numUsers": self.numUsers
+        }
+        return dest 
+
+# defines a thread
+class Thread:
+    def __repr__(self):
+        return
+
+    def __init__(self, body: str, timeStamp: datetime, title: str, userID: google.cloud.firestore.DocumentReference):
+        self.body = body
+        self.timeStamp = timeStamp
+        self.title = title
+        self.userID = userID
+
+    @staticmethod
+    def from_dict(**source) -> User:
+        return User(**source)   
+    
+    def to_dict(self):
+        return
+
+
 def read(collectionName: str, documentName: str):
-    """returns the document specified as a dict unless it's not found then returns None""" 
+    """reads a given document from firebase. returns the dict object unless document not found then returns None. caller has to handle the case of None"""
     doc_ref = db.collection(collectionName).document(documentName)
     try:
         doc = doc_ref.get()
-        return doc.to_dict() 
+        return doc.to_dict()
     except google.cloud.exceptions.NotFound:
         return None
 
-# [END read]
 
-# [START create]
-def create(data):
-    """creates the document with the data under the collection""" 
-    student = Student(**data)
-    return from_sql(sentence)
-# [END create]
+def create(collection: str, document: str, data: dict):
+    """creates the given document in the collection. this operation is idempotent"""
+    db.collection(collection).document(document).set(data)
 
-# [START update]
-def update(data, id):
-    """updates the document; not for use with nested attributes or arrays of attributes"""
-    sentence = Sentence.query.get(id)
-    for k, v in data.items():
-        setattr(sentence, k, v)
-    db.session.commit()
-    return from_sql(sentence)
-# [END update]
 
-def delete(id):
-    """deletes the specified document""" 
-    Sentence.query.filter_by(id=id).delete()
-    db.session.commit()
+def update(collection: str, document: str, data: dict):
+    """update the given document in the collection. this operation is idempotent"""
+    db.collection(collection).document(document).update(data)
+
+
+def delete(collection: str, document: str):
+    """deletes the given document in the collection. this operation is idempotent"""
+    db.collection(collection).document(document).delete()
 
