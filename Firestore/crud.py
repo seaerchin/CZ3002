@@ -5,10 +5,10 @@ from . import cloudFireStore
 import datetime 
 crud = Blueprint('crud', __name__)
 
-@crud.route('/create/<type>/<id>', methods = ['PUT'])
+@crud.route('/create', methods = ['PUT'])
 def create():
     """gets the json object and creates the document from the provided type and id. returns 200 if ok else 500"""
-    d = request.args()
+    d = request.args().to_dict()
     data = request.get_json()
     try: 
         cloudFireStore.create(data, **d)
@@ -20,7 +20,7 @@ def create():
 @crud.route('/read', methods = ['GET'])
 def read():
     """reads data from db and returns it as a json object else raises 404; extracts args from request params"""
-    d = request.args
+    d = request.args.to_dict()
     data = cloudFireStore.read(**d)
     if data == None:
         raise NotFound("The document you are requesting could not be found in the database")
@@ -31,7 +31,7 @@ def read():
 @crud.route('/update', methods = ['POST'])
 def update():
     """parses a json dict and creates an object in db; returns 200 if ok else 500"""
-    d = request.args 
+    d = request.args.to_dict()
     data = request.get_json()
     try:
         cloudFireStore.update(data = data, **d) 
@@ -44,7 +44,8 @@ def update():
 @crud.route('/delete', methods = ['GET'])
 def delete():
     """deletes the given document under collection"""
-    d = request.args 
+    d = request.args.to_dict() 
+    print(d)
     cloudFireStore.delete(**d)
     resp = jsonify(success=True)
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -53,10 +54,12 @@ def delete():
 @crud.route('/readall', methods = ['GET'])
 def readall():
     """reads an entire collection from args and returns it as a list of objs that it maps to"""
-    d = request.args
+    d = request.args.to_dict()
+    print(d)
     data = cloudFireStore.readAll(**d)
     if data == None:
         raise NotFound("The document you are requesting could not be found in the database")
-    resp = make_response({request.form["collectionName"] : data})
+    resp = make_response(data)
+    print(data)
     resp.headers['Access-Control-Allow-Origin'] = '*' # do this for everything 
     return resp 

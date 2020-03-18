@@ -62,7 +62,7 @@ class Thread:
     def __repr__(self) -> str:
         return "Thread(body = {}, timeStamp = {}, title = {}, userID = {}, votes = {}, views = {})".format(self.body, self.timeStamp, self.title, self.userID, self.votes, self.views)
 
-    def __init__(self, body: str, timeStamp: datetime, title: str, userID: firestore.DocumentReference, votes: int, views: int):
+    def __init__(self, body: str, timeStamp: datetime, title: str, userID: str, votes: int, views: int):
         self.body = body
         self.timeStamp = timeStamp
         self.title = title

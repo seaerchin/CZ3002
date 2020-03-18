@@ -22,10 +22,13 @@ def read(collectionName: str, documentName: str):
 
 def readAll(collectionName: str):
     """returns the whole collection as a list of objects"""
+    # result = dict()
     result = []
     iter = db.collection(collectionName).list_documents()
     for i in iter:
-        result.append(i.get().to_dict())
+        object = i.get()
+        # result[object.id] = (object.to_dict())
+        result.append(object.to_dict())
     return result 
 
 def create(collection: str, document: str, data: dict):
