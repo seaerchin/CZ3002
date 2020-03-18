@@ -57,6 +57,6 @@ def readall():
     data = cloudFireStore.readAll(**d)
     if data == None:
         raise NotFound("The document you are requesting could not be found in the database")
-    resp = make_response(data)
+    resp = make_response({d.keys()[0] : data})
     resp.headers['Access-Control-Allow-Origin'] = '*' # do this for everything 
     return resp 
