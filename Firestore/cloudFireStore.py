@@ -21,8 +21,12 @@ def read(collectionName: str, documentName: str):
         return None
 
 def readAll(collectionName: str):
-    """returns the whole collection"""
-    return db.collection(collectionName).get()
+    """returns the whole collection as a list of objects"""
+    result = []
+    iter = db.collection(collectionName).list_documents()
+    for i in iter:
+        result.append(i.get().to_dict())
+    return result 
 
 def create(collection: str, document: str, data: dict):
     """creates the given document in the collection. this operation is idempotent"""
@@ -30,7 +34,7 @@ def create(collection: str, document: str, data: dict):
 
 
 def update(collection: str, document: str, data: dict):
-    """update the given document in the collection. this operation is idempotent"""
+    """update the given document in the collection. this operation is NON-idempotent"""
     db.collection(collection).document(document).update(data)
 
 

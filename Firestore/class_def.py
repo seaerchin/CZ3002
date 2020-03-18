@@ -77,10 +77,10 @@ class Thread:
     def to_dict(self):
         dest = { 
             "body":self.body,
-            "timestamp":self.timeStamp,
+            "timeStamp":self.timeStamp,
             "title":self.title,
-            "userID":self.userID
-            "votes":self.votes
+            "userID":self.userID,
+            "votes":self.votes,
             "views":self.views 
         }
         return dest
@@ -92,9 +92,9 @@ class Rating:
         return 
     
     def __init__(self, description, timeStamp, likes, rating): # no type descriptors 
-        self.description = description
-        self.timeStamp = timeStamp
-        self.likes = likes
+        self.description = description,
+        self.timeStamp = timeStamp,
+        self.likes = likes,
         self.rating = rating
     
     @staticmethod
@@ -104,9 +104,30 @@ class Rating:
     def to_dict(self):
         dest = { 
             "description":self.description,
-            "timestamp":self.timeStamp,
+            "timeStamp":self.timeStamp,
             "likes":self.likes,
             "rating":self.rating
         }
         return dest
 
+
+class Replies:
+    def __repr__(self):
+        return 
+    
+    def __init__(self, body, timeStamp, userID):
+        self.body = body
+        self.timeStamp = timeStamp
+        self.userID = userID
+    
+    @staticmethod
+    def from_dict(**source):
+        return Rating(**source)   
+    
+    def to_dict(self):
+        dest = { 
+            "body":self.body,
+            "timeStamp":self.timeStamp,
+            "userID":self.userID
+        }
+        return dest
