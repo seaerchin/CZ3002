@@ -6,18 +6,19 @@ import datetime
 crud = Blueprint('crud', __name__)
 
 @crud.route('/create/<type>/<id>', methods = ['PUT'])
-def create(type: str, id: str):
+def create():
     """gets the json object and creates the document from the provided type and id. returns 200 if ok else 500"""
-    data = request.get_json
+    d = request.args()
+    data = request.get_json()
     try: 
-        cloudFireStore.create(type, id, data)
+        cloudFireStore.create(data, **d)
         resp = jsonify(success=True)
         return resp
     except:
         raise InternalServerError("The requested operation could not be performed")
 
 @crud.route('/read', methods = ['GET'])
-def read(type: str, id: str):
+def read():
     """reads data from db and returns it as a json object else raises 404; extracts args from request params"""
     d = request.args
     data = cloudFireStore.read(**d)
@@ -28,12 +29,12 @@ def read(type: str, id: str):
     return resp 
 
 @crud.route('/update', methods = ['POST'])
-def update(type:str, id: str):
+def update():
     """parses a json dict and creates an object in db; returns 200 if ok else 500"""
     d = request.args 
-    data = request.get_json
+    data = request.get_json()
     try:
-        cloudFireStore.update(data, **d) 
+        cloudFireStore.update(data = data, **d) 
         resp = jsonify(success=True)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
@@ -41,7 +42,7 @@ def update(type:str, id: str):
         raise InternalServerError("The requested operation could not be performed")
 
 @crud.route('/delete', methods = ['GET'])
-def delete(type:str, id: str):
+def delete():
     """deletes the given document under collection"""
     d = request.args 
     cloudFireStore.delete(**d)
@@ -50,7 +51,7 @@ def delete(type:str, id: str):
     return resp 
 
 @crud.route('/readall', methods = ['GET'])
-def readall(type: str):
+def readall():
     """reads an entire collection from args and returns it as a list of objs that it maps to"""
     d = request.args
     data = cloudFireStore.readAll(**d)
