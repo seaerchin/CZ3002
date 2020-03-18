@@ -28,17 +28,17 @@ def readAll(collectionName: str):
         result.append(i.get().to_dict())
     return result 
 
-def create(collection: str, document: str, data: dict):
+def create(collectionName: str, documentName: str, data: dict):
     """creates the given document in the collection. this operation is idempotent"""
     db.collection(collection).document(document).set(data)
 
 
-def update(collection: str, document: str, data: dict):
+def update(collectionName: str, documentName: str, data: dict):
     """update the given document in the collection. this operation is NON-idempotent"""
     db.collection(collection).document(document).update(data)
 
 
-def delete(collection: str, document: str):
+def delete(collectionName: str, documentName: str):
     """deletes the given document in the collection. this operation is idempotent"""
     db.collection(collection).document(document).delete()
 
